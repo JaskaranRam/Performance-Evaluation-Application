@@ -1,0 +1,70 @@
+
+fid = fopen('barrier.log', 'r');  % Sostituisci 'barrier.log' con il nome del tuo file di log
+log_text = textscan(fid, '%s', 'Delimiter', '\n');
+log_text = log_text{1};
+fclose(fid);
+
+% Inizializza le matrici per "_IN_" e "_OUT_"
+IN_dates = [];
+OUT_dates = [];
+
+% Scansiona il testo dei log
+for i = 1:length(log_text)
+    % Estrai la data e l'annotazione dal testo dei log
+    log_entry = log_text{i};
+    last_two_chars = log_entry(end-1:end);
+    if strcmp(last_two_chars, '_]')
+        % Questo è un "_IN_"
+        timestamp = extractBetween(log_entry, '[', '][_');
+        IN_dates = [IN_dates; datetime(timestamp, 'InputFormat', 'uuuu:DDD:HH:mm:ss:SSS')];
+    elseif strcmp(last_two_chars, 'T]')
+        % Questo è un "_OUT_"
+        timestamp = extractBetween(log_entry, '[', '][_');
+        OUT_dates = [OUT_dates; datetime(timestamp, 'InputFormat', 'uuuu:DDD:HH:mm:ss:SSS')];
+    end
+end
+
+% Crea la matrice con le colonne "_IN_" e "_OUT_"
+log_matrix = [IN_dates, OUT_dates];
+
+
+NA = size (log_matrix,1)
+NC = size (log_matrix,1)
+
+T = log_matrix(end,2) - log_matrix(1,1)
+
+T_in_secondi = seconds(T)
+
+Lambda = NA / T_in_secondi
+
+X = NC / T_in_secondi
+
+ri = log_matrix(:,2) - log_matrix(:,1)
+
+mean(ri)
+
+seconds(ri) < 30
+
+sum(ans)
+
+ans/NC
+
+sum(ri)
+
+W = sum(ri)
+
+N = W / T
+
+deltaT = log_matrix(2:end,1) - log_matrix(1:end-1, 1)
+
+mean(deltaT)
+
+seconds(deltaT)<60
+sum(ans)
+ans/NC
+
+average service time = Busy time / C
+Busy Time = ?
+Utilization = Busy Time / T
+
+(mi manca il 3, 4, 7, 10)
